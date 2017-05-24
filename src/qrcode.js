@@ -17,7 +17,7 @@ function generateRawQRCode(text, opts) {
  * @param {Opt} opts - options
  * @return {Promise<Buffer>} promise
  */
-async function generate(text, opts) {
+async function generate(text, opts = {}) {
   const buffer = await generateRawQRCode(text, opts)
   if (!opts.logo) return buffer
 
