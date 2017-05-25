@@ -1,22 +1,15 @@
 const qrcode = require('./qrcode')
+const fs = require('fs')
 
-class QRCode {
-  constructor(config) {
-    this._config = config || {}
-  }
-
-  size(size) {
-    return new QRCode({ ...this._config, size })
-  }
-
-  generate() {
-    const { text, ...opts } = this._config
-    return qrcode(text, opts)
-  }
-
-  output() {
-    return this.generate()
-  }
+const defaultOptions = {
+  dist: null,
+  logo: null,
+  level: 'M',
+  size: 128
 }
 
-module.exports = new QRCode()
+exports.generate = async function (text, opts = {}) {
+  const buffer = await qrcode.generate(text, { ...defaultOptions, ...opts })
+  if (opts.dist) return fs.writeFileSync(opts.dist, buffer, { encode: 'binary' })
+  return buffer
+}

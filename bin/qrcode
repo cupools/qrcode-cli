@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 
 const program = require('commander')
+const qrcode = require('../lib')
+const pkg = require('../package.json')
 
 program
-  .version('0.0.1')
-  .command('qrcode <text> [options]')
-  .action(function (text) {
+  .version(pkg.version)
+  .option('-t, --text [text]', 'text to generate QRCode')
+  .option('-o, --output [path]', 'output path')
+  .option('-s, --size [size]', 'picture size')
+  .parse(process.argv)
 
-  })
-
-program.parse(process.argv)
+qrcode.generate(program.text, {
+  output: program.output,
+  size: program.size,
+  level: program.level,
+  logo: program.logo
+})
