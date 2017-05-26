@@ -2,14 +2,15 @@ const qrcode = require('./qrcode')
 const fs = require('fs')
 
 const defaultOptions = {
-  dist: null,
+  output: null,
   logo: null,
-  level: 'M',
-  size: 128
+  level: 'H',
+  size: 128,
+  margin: 1
 }
 
-exports.generate = async function (text, opts = {}) {
-  const buffer = await qrcode.generate(text, { ...defaultOptions, ...opts })
-  if (opts.dist) return fs.writeFileSync(opts.dist, buffer, { encode: 'binary' })
+exports.generate = function (text, opts = {}) {
+  const buffer = qrcode.generate(text, { ...defaultOptions, ...opts })
+  if (opts.output) return fs.writeFileSync(opts.output, buffer, { encode: 'binary' })
   return buffer
 }

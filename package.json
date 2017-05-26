@@ -48,6 +48,6 @@
     "commander": "^2.9.0",
     "images": "^3.0.0",
     "inquirer": "^3.0.6",
-    "qrcode": "^0.8.1"
+    "qr-image": "^3.2.0"
   }
 }

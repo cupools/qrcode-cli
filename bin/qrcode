@@ -9,11 +9,14 @@ program
   .option('-t, --text [text]', 'text to generate QRCode')
   .option('-o, --output [path]', 'output path')
   .option('-s, --size [size]', 'picture size')
+  .option('--logo [logo]', 'qrcode logo')
   .parse(process.argv)
 
-qrcode.generate(program.text, {
-  output: program.output,
-  size: program.size,
-  level: program.level,
-  logo: program.logo
-})
+const opts = ['text', 'output', 'size', 'level', 'logo'].reduce((mem, key) => {
+  const raw = program[key]
+  const val = key === 'size' && raw ? parseFloat(raw) : raw
+  if (val !== undefined) return Object.assign({}, mem, { [key]: val })
+  return mem
+}, {})
+
+qrcode.generate(opts.text, opts)

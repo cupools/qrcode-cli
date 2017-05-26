@@ -1,27 +1,28 @@
-const qrcode = require('qrcode')
+const qrcode = require('qr-image')
 const images = require('images')
 
 function generateRawQRCode(text, opts) {
-  return new Promise((resolve, reject) => {
-    qrcode.toDataURL(text, opts, (err, dataURL) => {
-      if (err) reject(err)
-      const buffer = new Buffer(dataURL.split(',')[1], 'base64')
-      resolve(buffer)
-    })
+  const size = Math.ceil(opts.size / 23)
+  const buffer = qrcode.imageSync(text, {
+    ec_level: opts.level,
+    size,
+    margin: opts.margin
   })
+  return buffer
 }
 
 /**
  * generate QRCode
  * @param {string} text - text to generate QRCode
  * @param {Opt} opts - options
- * @return {Promise<Buffer>} promise
+ * @return {Buffer} buffer
  */
-async function generate(text, opts = {}) {
-  const buffer = await generateRawQRCode(text, opts)
-  if (!opts.logo) return buffer
+function generate(text, opts = {}) {
+  const buffer = generateRawQRCode(text, opts)
+  const img = images(buffer).resize(opts.size)
 
-  const img = images(buffer)
+  if (!opts.logo) return img.encode('png')
+
   const logo = images(opts.logo)
   const width = img.width()
   const logoSize = Math.ceil(width / 5)
