@@ -6,7 +6,7 @@ const defaultOptions = {
   logo: null,
   level: 'H',
   size: 128,
-  margin: 1
+  margin: 4
 }
 
 exports.generate = function (text, opts = {}) {

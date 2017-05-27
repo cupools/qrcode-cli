@@ -1,16 +1,6 @@
 const qrcode = require('qr-image')
 const images = require('images')
 
-function generateRawQRCode(text, opts) {
-  const size = Math.ceil(opts.size / 23)
-  const buffer = qrcode.imageSync(text, {
-    ec_level: opts.level,
-    size,
-    margin: opts.margin
-  })
-  return buffer
-}
-
 /**
  * generate QRCode
  * @param {string} text - text to generate QRCode
@@ -18,19 +8,27 @@ function generateRawQRCode(text, opts) {
  * @return {Buffer} buffer
  */
 function generate(text, opts = {}) {
-  const buffer = generateRawQRCode(text, opts)
-  const img = images(buffer).resize(opts.size)
+  const qrSize = Math.ceil(opts.size / 21)
+  const outputSize = qrSize * 21
+  const buffer = qrcode.imageSync(text, {
+    ec_level: opts.level,
+    size: qrSize,
+    margin: 0
+  })
 
-  if (!opts.logo) return img.encode('png')
+  const img = images(opts.size, opts.size).fill(255, 255, 255, 1)
+  const qrimg = images(buffer)
 
-  const logo = images(opts.logo)
-  const width = img.width()
-  const logoSize = Math.ceil(width / 5)
-  const pos = (width - logoSize) / 2
+  if (opts.logo) {
+    const logo = images(opts.logo)
+    const logoSize = outputSize / 5
+    const pos = (outputSize - logoSize) / 2
+    qrimg.draw(logo.resize(logoSize, logoSize), pos, pos)
+  }
 
-  logo.resize(logoSize)
-  img.draw(logo, pos, pos)
-  return img.encode('png')
+  img.draw(qrimg.resize(opts.size - opts.margin * 2), opts.margin, opts.margin)
+
+  return img.resize(opts.size).encode('png')
 }
 
 exports.generate = generate
