@@ -1,5 +1,7 @@
-const qrcode = require('./qrcode')
 const fs = require('fs')
+const path = require('path')
+const mkdirp = require('mkdirp')
+const qrcode = require('./qrcode')
 
 const defaultOptions = {
   output: null,
@@ -11,6 +13,12 @@ const defaultOptions = {
 
 exports.generate = function (text, opts = {}) {
   const buffer = qrcode.generate(text, { ...defaultOptions, ...opts })
-  if (opts.output) return fs.writeFileSync(opts.output, buffer, { encode: 'binary' })
+
+  if (opts.output) {
+    const dir = path.dirname(opts.output)
+    mkdirp.sync(dir)
+    fs.writeFileSync(opts.output, buffer, { encode: 'binary' })
+  }
+
   return buffer
 }
